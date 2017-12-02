@@ -48,7 +48,7 @@ export default class TableDetail extends React.Component {
           className="ui-animate"
         >
           <article className="article">
-            <h2 className="article-title">Material Table</h2>
+            <h2 className="article-title">Employee Details</h2>
             {state.showForm ? (
               whichForm
             ) : (
