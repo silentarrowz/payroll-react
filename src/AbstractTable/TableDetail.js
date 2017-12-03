@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as Table from 'reactabular-table';
 import QueueAnim from 'rc-queue-anim';
 import EditTable from './EditTable';

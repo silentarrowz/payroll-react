@@ -12,9 +12,11 @@ db.open().catch((error) => {
 
 import Dexie from 'dexie';
 
-const db = new Dexie('newDb');
+const db = new Dexie('EmployeeDb');
 
-db.version(2).stores({ employee: '++id, name, pf' });
+db.version(3).stores({ employee: '++id, name, pf,esi,location,joining,salary' });
+
+
 db.open();
 
 export default db;

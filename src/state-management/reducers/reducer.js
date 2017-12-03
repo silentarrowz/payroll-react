@@ -1,91 +1,83 @@
 import { cloneDeep, findIndex, merge } from 'lodash';
-// import initialState from './initialState';
 
 
-const reducer = (state = {}, action) => {
+const reducer = (state, action) => {
   const row = action.row;
   const index = row && findIndex(state, { id: row.id });
 
   switch (action.type) {
-    case 'ADD_ROWS_DATA': {
-      console.log(row.rows);
 
-      const whichTable = action.row.identifier;
-      const newState = merge({}, state, { [whichTable]: row.rows });
-      // have to make sure that this merging
-      // doesnt wipe out another table's data
+    /*
+    case 'CREATE_ROW':
+    	console.log([row].concat(state));
 
-      console.log('row added to state : ', newState);
+      return [row].concat(state);
 
-      return newState;
+    case 'DELETE_ROW': {
+      if (index >= 0) {
+        return state.slice(0, index).concat(state.slice(index + 1));
+      }
+
+      return state;
     }
+    */
     case 'EDIT_ROW': {
       const tableToEdit = action.row.stateItems.whichTable;
 
       if (state) {
-        const editingState = cloneDeep(state);
-        const tableEditing = editingState[tableToEdit];
+        const editingRows = cloneDeep(state);
 
-        for (let i = 0; i < tableEditing.length; i++) {
-          Object.keys(tableEditing[i]).forEach((item) => {
-            if (tableEditing[i].id === action.row.stateItems.id) {
-              tableEditing[i][item] = action.row.stateItems[item];
-            }
-          });
-        }
-        console.log(editingState);
-
-        return editingState;
-
-        /*
-          if(editingRows[tableToEdit]){
-            for(let i=0;i<editingRows[tableToEdit].length;i++){
-             if(editingRows[tableToEdit][i].id === action.row.stateItems.id){
-              Object.keys(editingRows[tableToEdit][i]).forEach((item)=>{
-                editingRows[tableToEdit][i][item]=action.row.stateItems[item];
+        if (editingRows[tableToEdit]) {
+          for (let i = 0; i < editingRows[tableToEdit].length; i++) {
+            if (editingRows[tableToEdit][i].id === action.row.stateItems.id) {
+              Object.keys(editingRows[tableToEdit][i]).forEach((item) => {
+                editingRows[tableToEdit][i][item] = action.row.stateItems[item];
               });
-             }
             }
-            console.log('editingRows is : ',editingRows);
-            const newState = merge({},state,editingRows);
-            console.log('newState is : ',newState);
-             console.log('editingRows is : ',editingRows);
-             return newState;
-          }else{
-            const newRows = action.row.rows;
-            for(let i =0;i<newRows[tableToEdit].length;i++){
-              if(newRows[tableToEdit][i].id === action.row.stateItems.id){
-                Object.keys(newRows[tableToEdit][i]).forEach((item)=>{
-                  newRows[tableToEdit][i][item]=action.row.stateItems[item];
-                });
-              }
-            }
-            console.log('newRows is : ',newRows);
-            const newState = merge({},state,newRows);
-            console.log('newState is : ',newState);
-            return newState;
           }
-         //const newRowData = action.row.rows;
+          console.log('editingRows is : ', editingRows);
+          const newState = merge({}, state, editingRows);
 
+          console.log('newState is : ', newState);
+          console.log('editingRows is : ', editingRows);
 
-      }else{
+          return newState;
+        }
         const newRows = action.row.rows;
-        for(let i =0;i<newRows[tableToEdit].length;i++){
-          if(newRows[tableToEdit][i].id === action.row.stateItems.id){
-            Object.keys(newRows[tableToEdit][i]).forEach((item)=>{
-              newRows[tableToEdit][i][item]=action.row.stateItems[item];
+
+        for (let i = 0; i < newRows[tableToEdit].length; i++) {
+          if (newRows[tableToEdit][i].id === action.row.stateItems.id) {
+            Object.keys(newRows[tableToEdit][i]).forEach((item) => {
+              newRows[tableToEdit][i][item] = action.row.stateItems[item];
             });
           }
         }
-        console.log('newRows is : ',newRows);
-        const newState = merge({},newRows);
-        console.log('newState is : ',newState);
-        return newState;
-      }
+        console.log('newRows is : ', newRows);
+        const newState = merge({}, state, newRows);
 
-   */
+        console.log('newState is : ', newState);
+
+        return newState;
+
+        // const newRowData = action.row.rows;
       }
+      const newRows = action.row.rows;
+
+      for (let i = 0; i < newRows[tableToEdit].length; i++) {
+        if (newRows[tableToEdit][i].id === action.row.stateItems.id) {
+          Object.keys(newRows[tableToEdit][i]).forEach((item) => {
+            newRows[tableToEdit][i][item] = action.row.stateItems[item];
+          });
+        }
+      }
+      console.log('newRows is : ', newRows);
+      const newState = merge({}, newRows);
+
+      console.log('newState is : ', newState);
+
+      return newState;
     }
+
 
     case 'CONFIRM_EDIT': {
       if (index >= 0) {
@@ -95,6 +87,7 @@ const reducer = (state = {}, action) => {
         });
       }
     }
+
     default:
       return state;
   }

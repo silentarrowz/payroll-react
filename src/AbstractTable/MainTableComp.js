@@ -3,10 +3,7 @@
 import React from 'react';
 import * as edit from 'react-edit';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { AddRowData, editRow } from '../state-management/actions/employeeActions';
+import actions from '../state-management/actions/employeeActions';
 import TableDetail from './TableDetail';
 
 
@@ -17,20 +14,26 @@ class generalTable extends React.Component {
     this.state = {
       columns: this.getColumns(this.props.columns), // initial columns
       showForm: false,
-
+      whichTable: '',
     };
     this.handleAllChange = this.handleAllChange.bind(this);
     this.submitData = this.submitData.bind(this);
     this.closeForm = this.closeForm.bind(this);
   }
 
+
   componentWillMount() {
-    console.log('component about to mount');
-    this.props.addRowsFunc(this.props.identifier);
     this.setState({
-      rowdata: this.props.rows[this.props.identifier],
-      whichTable: this.props.identifier,
+      whichTable: this.getTableKey(this.props.rowdata),
     });
+  }
+
+
+  getTableKey(rows) {
+    const tableKey = (Object.keys(rows))[0];
+    // const tableName = this.props.rowdata[tableKey];
+
+    return tableKey;
   }
 
   getColumns(columns) {
@@ -72,7 +75,7 @@ class generalTable extends React.Component {
     });
     const stateItems = this.state;
 
-    this.props.editFunc(stateItems, this.props.rowdata);
+    this.props.editFunc(stateItems, this.props.rows);
   }
 
   closeForm() {
@@ -85,8 +88,8 @@ class generalTable extends React.Component {
     let rowz = '';
     const whichTable = this.props.identifier;
 
-    if (this.props.rows) {
-      rowz = this.props.rows[whichTable];
+    if (this.props.rowdata) {
+      rowz = this.props.rowdata[whichTable];
     }
 
     return (<div>
@@ -106,16 +109,19 @@ class generalTable extends React.Component {
     );
   }
 }
-
 const mapStateToProps = (state) => ({
   rows: state,
 });
 
 const mapDispatchToProps = (dispatch) => ({
 
-  addRowsFunc: bindActionCreators(AddRowData, dispatch),
-
-  editFunc: (stateItems, rows) => dispatch(editRow(stateItems, rows)),
+  /*
+  createRow:dispatch({
+    type: 'CREATE_ROW',
+    row: { name: 'John Doe', id: uuid.v4() }
+  }),
+  */
+  editFunc: (stateItems, rows) => dispatch(actions.editRow(stateItems, rows)),
   confirmEdit: (property, value, id) => dispatch({
     type: 'CONFIRM_EDIT',
     row: { property, value, id },

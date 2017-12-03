@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import db from './db';
@@ -22,31 +23,13 @@ export default class EmployeeForm extends Component {
 
   componentWillMount() {
     const that = this;
-
-    /*
-    db.transaction('rw', db.employee, (that) => {
-    // Let's add some data to db:
-      // const insert_object = { name, email };
-
-      db.employee.each(emp => console.log(emp));
-    // db.employee.add(insert_object);
-    }).
-      then((result) => {
-        // document.write(JSON.stringify (result));
-        console.log(JSON.stringify(result));
-        that.setState({ tableArray: JSON.stringify(result) });
-      }).
-      catch((e) => {
-        console.log('error is : ', e);
-      });
-      */
     db.transaction('r', db.employee, () => {
       db.employee.toArray().then((emp) => {
         console.log('emp is : ', emp);
         const empArr = JSON.stringify(emp);
-        const forTable = emp;
+        const forTable = { 'employee': emp };
 
-        this.setState({ showDb: empArr, tableArray: emp });
+        this.setState({ showDb: empArr, tableArray: forTable });
       });
     });
   }
@@ -62,30 +45,41 @@ export default class EmployeeForm extends Component {
     e.preventDefault();
     const that = this;
 
-    function add_new(name, email) {
+    function add_new(name, pf, esi, location, joining, salary) {
       // Interact With Database
 
 
       db.transaction('rw', db.employee, (that) => {
         // Let's add some data to db:
-        const insert_object = { name, email };
+        const insert_object = { name, pf, esi, location, joining, salary };
 
         db.employee.add(insert_object);
       }).then(() => db.employee.toArray()).
         then((result) => {
         // document.write(JSON.stringify (result));
           console.log(JSON.stringify(result));
-          that.setState({ tableArray: JSON.stringify(result) });
+          const toTable = { employee: result };
+
+          that.setState({ showDb: JSON.stringify(result), tableArray: toTable });
         }).
         catch((e) => {
           console.log('error is : ', e);
         });
     }
-    add_new(this.state.name, this.state.pf, this);
+    add_new(this.state.name, this.state.pf, this.state.esi, this.state.location, this.state.joining, this.state.salary);
   }
 
   render() {
     const columns = [
+      {
+        property: 'id',
+        header: {
+          label: 'ID',
+        },
+        cell: {
+          transforms: '',
+        },
+      },
       {
         property: 'name',
         header: {
@@ -96,23 +90,51 @@ export default class EmployeeForm extends Component {
         },
       },
       {
-        property: 'email',
+        property: 'pf',
         header: {
-          label: 'Email',
+          label: 'EPF No.',
         },
         cell: {
           transforms: '',
         },
       },
       {
-        property: 'id',
+        property: 'esi',
         header: {
-          label: 'ID',
+          label: 'ESI',
         },
         cell: {
           transforms: '',
         },
       },
+      {
+        property: 'location',
+        header: {
+          label: 'Location',
+        },
+        cell: {
+          transforms: '',
+        },
+      },
+      {
+        property: 'joining',
+        header: {
+          label: 'Joining Date',
+        },
+        cell: {
+          transforms: '',
+        },
+      },
+      {
+        property: 'salary',
+        header: {
+          label: 'Salary',
+        },
+        cell: {
+          transforms: '',
+        },
+      },
+
 
     ];
 
@@ -147,24 +169,32 @@ export default class EmployeeForm extends Component {
             type="text"
             name="esi"
             placeholder="enter esi"
+            onChange={this.handleChange}
+
           />
 
           <input
             type="text"
             name="location"
             placeholder="enter location"
+            onChange={this.handleChange}
+
           />
 
           <input
             type="text"
             name="joining"
             placeholder="enter joining data"
+            onChange={this.handleChange}
+
           />
 
           <input
             type="text"
             name="salary"
             placeholder="enter salary"
+            onChange={this.handleChange}
+
           />
 
           <input
@@ -177,10 +207,13 @@ export default class EmployeeForm extends Component {
         </form>
         <br/>
         {this.state.showDb ? this.state.showDb : 'no data yet'}
-        <MainTableComp
+        {this.state.tableArray ?
+         (<MainTableComp
           identifier="employee"
+          rowdata={this.state.tableArray}
           columns={columns}
-        />
+        />)
+         : 'no table data'}
       </div>
     );
   }
