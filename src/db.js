@@ -15,6 +15,7 @@ import Dexie from 'dexie';
 const db = new Dexie('EmployeeDb');
 
 db.version(3).stores({ employee: '++id, name, pf,esi,location,joining,salary' });
+db.version(4).stores({ employee: '++id, name, pf,esi,location,joining,wagesrate,salary' });
 
 
 db.open();

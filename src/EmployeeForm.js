@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { Component } from 'react';
+import axios from 'axios';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import db from './db';
 import MainTableComp from './AbstractTable/MainTableComp';
@@ -13,6 +14,7 @@ export default class EmployeeForm extends Component {
       esi: '',
       location: '',
       joining: '',
+      wagesrate:'',
       salary: '',
       showDb: '',
       tableArray: '',
@@ -23,15 +25,15 @@ export default class EmployeeForm extends Component {
 
   componentWillMount() {
     const that = this;
-    db.transaction('r', db.employee, () => {
-      db.employee.toArray().then((emp) => {
-        console.log('emp is : ', emp);
-        const empArr = JSON.stringify(emp);
-        const forTable = { 'employee': emp };
-
-        this.setState({ showDb: empArr, tableArray: forTable });
+    axios.get('http://localhost:8000/get-data')
+      .then(function (response) {
+        console.log(response);
+   that.setState({ showDb: response.data, tableArray:{'employee':response.data}  });
+   console.log(that.state);
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    });
   }
 
   handleChange(e) {
@@ -45,28 +47,29 @@ export default class EmployeeForm extends Component {
     e.preventDefault();
     const that = this;
 
-    function add_new(name, pf, esi, location, joining, salary) {
+    function add_new(name, pf, esi, location, joining,wagesrate, salary) {
       // Interact With Database
-
-
-      db.transaction('rw', db.employee, (that) => {
-        // Let's add some data to db:
-        const insert_object = { name, pf, esi, location, joining, salary };
-
-        db.employee.add(insert_object);
-      }).then(() => db.employee.toArray()).
-        then((result) => {
-        // document.write(JSON.stringify (result));
-          console.log(JSON.stringify(result));
-          const toTable = { employee: result };
-
-          that.setState({ showDb: JSON.stringify(result), tableArray: toTable });
-        }).
-        catch((e) => {
-          console.log('error is : ', e);
-        });
-    }
-    add_new(this.state.name, this.state.pf, this.state.esi, this.state.location, this.state.joining, this.state.salary);
+      axios.post('http://localhost:8000/add-employee', {
+        name: name,
+        epf: pf,
+        esi:esi,
+        location:location,
+        joining:joining,
+        wagesrate:wagesrate,
+        salary:salary
+      })
+      .then(function (response) {
+        console.log(response);
+   that.setState({ showDb: response.data, tableArray:{'employee':response.data}  });
+   console.log(that.state);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+     
+  }
+  add_new(this.state.name, this.state.pf, this.state.esi, this.state.location, this.state.joining,this.state.wagesrate, this.state.salary);
+  
   }
 
   render() {
@@ -90,7 +93,7 @@ export default class EmployeeForm extends Component {
         },
       },
       {
-        property: 'pf',
+        property: 'epf',
         header: {
           label: 'EPF No.',
         },
@@ -126,14 +129,23 @@ export default class EmployeeForm extends Component {
         },
       },
       {
-        property: 'salary',
+        property: 'wagesrate',
         header: {
-          label: 'Salary',
+          label: 'Wages Rate',
         },
         cell: {
           transforms: '',
         },
       },
+      {
+      property: 'salary',
+      header: {
+        label: 'Salary',
+      },
+      cell: {
+        transforms: '',
+      },
+    },
 
 
     ];
@@ -144,6 +156,25 @@ export default class EmployeeForm extends Component {
         />
 
 */
+
+/*
+      db.transaction('rw', db.employee, (that) => {
+       const insert_object = { name, pf, esi, location, joining,wagesrate, salary };
+
+        db.employee.add(insert_object);
+      }).then(() => db.employee.toArray()).
+        then((result) => {
+        // document.write(JSON.stringify (result));
+          console.log(JSON.stringify(result));
+          const toTable = { employee: result };
+
+          that.setState({ showDb: JSON.stringify(result), tableArray: toTable });
+        }).
+        catch((e) => {
+          console.log('error is : ', e);
+        });
+    }
+    */
 
     return (
       <div>
@@ -188,6 +219,13 @@ export default class EmployeeForm extends Component {
             onChange={this.handleChange}
 
           />
+           <input
+            type="text"
+            name="wagesrate"
+            placeholder="enter wagesrate"
+            onChange={this.handleChange}
+
+          />
 
           <input
             type="text"
@@ -206,15 +244,18 @@ export default class EmployeeForm extends Component {
 
         </form>
         <br/>
-        {this.state.showDb ? this.state.showDb : 'no data yet'}
         {this.state.tableArray ?
-         (<MainTableComp
-          identifier="employee"
-          rowdata={this.state.tableArray}
-          columns={columns}
-        />)
-         : 'no table data'}
+                 (<MainTableComp
+                  identifier='employee'
+                  history={this.props.history}
+                  rowdata={this.state.tableArray}
+                  columns={columns}
+                />)
+                 : 'no table data' }
       </div>
     );
   }
 }
+
+
+ 

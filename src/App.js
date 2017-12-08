@@ -4,6 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import EmployeeForm from './EmployeeForm';
 import SalaryDetails from './SalaryDetails';
+import SalarySheet from './SalarySheet';
 
 export class Home extends Component {
   render() {
@@ -14,6 +15,8 @@ export class Home extends Component {
         <Link to="/">Home</Link><br/>
         <Link to="/add-employee">Add Employee</Link>
         <Link to="/salary-details">Salary Details</Link>
+        <Link to="/salary-sheet">Salary Sheet</Link>
+
 
         <h2>This is home page</h2>
       </div>
@@ -50,6 +53,10 @@ class App extends Component {
           <Route
             path="/salary-details"
             component={SalaryDetails}
+          />
+          <Route
+            path="/salary-sheet"
+            component={SalarySheet}
           />
 
         </div>
