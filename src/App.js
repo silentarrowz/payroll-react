@@ -1,40 +1,35 @@
+/* eslint-disable */
+
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import logo from './logo.svg';
-import './App.css';
+import { connect } from 'react-redux';
+import axios from 'axios';
 import EmployeeForm from './EmployeeForm';
 import SalaryDetails from './SalaryDetails';
 import SalarySheet from './SalarySheet';
-
-export class Home extends Component {
-  render() {
-    return (
-
-
-      <div >
-        <Link to="/">Home</Link><br/>
-        <Link to="/add-employee">Add Employee</Link>
-        <Link to="/salary-details">Salary Details</Link>
-        <Link to="/salary-sheet">Salary Sheet</Link>
-
-
-        <h2>This is home page</h2>
-      </div>
-
-
-    );
-  }
-}
+import actions from './state-management/actions/employeeActions';
+import Home from './Home';
 
 class App extends Component {
-/*
-  <Link to='/edit-employee' component={EditEmployee}>Edit Employee</Link>
+  componentWillMount() {
+    const that = this;
 
-          <Link to='/salary-sheet' component={SalarySheet}>Salary Sheet</Link>
+    axios.get('http://localhost:8000/get-data').
+      then((response) => {
+        console.log(response);
+        // that.setState({ showDb: response.data, tableArray: { employee: response.data } });
+        // console.log(that.state);
+        that.props.addRows(response.data);
+      }).
+      catch((error) => {
+        console.log(error);
+      });
+  }
 
-          <Link to='/individual-salary' component={EmployeeForm}>Individual Salary</Link>
-*/
+
   render() {
+    console.log(this.props.csvData);
+
     return (
       <Router>
 
@@ -44,19 +39,28 @@ class App extends Component {
           <Route
             exact
             path="/"
-            component={Home}
+            render={() => <Home
+              title={'I am Title'}
+              status={'Here is my status'}
+              // example of passing props to child component with react router
+              csvData={this.props.csvData}
+            />
+            }
           />
           <Route
             path="/add-employee"
             component={EmployeeForm}
-          />
+                      />
           <Route
             path="/salary-details"
             component={SalaryDetails}
           />
           <Route
             path="/salary-sheet"
-            component={SalarySheet}
+            render={() => <SalarySheet
+              // example of passing props to child component with react router
+              csvData={this.props.csvData['employee']}
+            />}
           />
 
         </div>
@@ -67,4 +71,12 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  csvData: state.employeeReducer,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  addRows: (rows) => dispatch(actions.addEmployee(rows)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,11 +1,14 @@
 /* eslint-disable */
 import React, { Component } from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import db from './db';
 import MainTableComp from './AbstractTable/MainTableComp';
+import SalarySheet from './SalarySheet';
 
-export default class EmployeeForm extends Component {
+
+class EmployeeForm extends Component {
   constructor() {
     super();
     this.state = {
@@ -22,7 +25,7 @@ export default class EmployeeForm extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
+/*
   componentWillMount() {
     const that = this;
     axios.get('http://localhost:8000/get-data')
@@ -35,6 +38,7 @@ export default class EmployeeForm extends Component {
         console.log(error);
       });
   }
+  */
 
   handleChange(e) {
     const itemChanged = e.target.name;
@@ -244,18 +248,33 @@ export default class EmployeeForm extends Component {
 
         </form>
         <br/>
-        {this.state.tableArray ?
+        {this.props.csvData ?
                  (<MainTableComp
                   identifier='employee'
                   history={this.props.history}
-                  rowdata={this.state.tableArray}
+                  rowdata={this.props.csvData}
                   columns={columns}
                 />)
                  : 'no table data' }
+
+                 <SalarySheet
+                 csvData={this.props.csvData['employee']}
+                 />
       </div>
     );
   }
 }
+
+
+const mapStateToProps = (state) => ({
+  csvData: state.employeeReducer,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  addRows: (rows) => dispatch(actions.addEmployee(rows)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(EmployeeForm);
 
 
  

@@ -3,7 +3,7 @@
 import React from 'react';
 import * as edit from 'react-edit';
 import { connect } from 'react-redux';
-import actions from '../state-management/actions/employeeActions';
+import actions from '../state-management/actions/tableActions';
 import TableDetail from './TableDetail';
 
 

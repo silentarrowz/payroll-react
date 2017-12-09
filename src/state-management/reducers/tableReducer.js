@@ -1,26 +1,11 @@
 import { cloneDeep, findIndex, merge } from 'lodash';
 
 
-const reducer = (state, action) => {
+const tableReducer = (state = {}, action) => {
   const row = action.row;
   const index = row && findIndex(state, { id: row.id });
 
   switch (action.type) {
-
-    /*
-    case 'CREATE_ROW':
-    	console.log([row].concat(state));
-
-      return [row].concat(state);
-
-    case 'DELETE_ROW': {
-      if (index >= 0) {
-        return state.slice(0, index).concat(state.slice(index + 1));
-      }
-
-      return state;
-    }
-    */
     case 'EDIT_ROW': {
       const tableToEdit = action.row.stateItems.whichTable;
 
@@ -107,4 +92,4 @@ function editProperty(rows, index, values) {
   return ret;
 }
 
-export default reducer;
+export default tableReducer;

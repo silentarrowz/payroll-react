@@ -5,6 +5,8 @@
       "linebreak-style": [0, "unix"],
       "no-debugger": [1],
       "no-restricted-syntax": [1],
+    //  "quotes": [2, "single", { "avoidEscape": true }],
+      
       "react/jsx-no-bind": [1, {
         "ignoreRefs": true,
         "allowArrowFunctions": true,
