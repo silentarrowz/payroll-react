@@ -1,4 +1,5 @@
 /* eslint-disable */
+import $ from 'jquery';
 
 const employeeReducer = (state = {}, action) => {
   switch (action.type) {
@@ -7,6 +8,12 @@ const employeeReducer = (state = {}, action) => {
       const newState = Object.assign({}, state, { 'employee': dataFromCsv });
 
       return newState;
+    }
+    
+    case 'ADD_SALARY_SHEET':{
+      const salarySheetData = action.data;
+      const salaryState = $.extend(true,{},state,salarySheetData);
+      return salaryState;
     }
     default:
       return state;

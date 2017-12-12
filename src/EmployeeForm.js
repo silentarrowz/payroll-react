@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import db from './db';
 import MainTableComp from './AbstractTable/MainTableComp';
 import SalarySheet from './SalarySheet';
 
