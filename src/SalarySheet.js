@@ -2,71 +2,21 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  TableHeaderColumn,
+  TableRow,
+  TableRowColumn,
+} from 'material-ui/Table';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import MainTableComp from './AbstractTable/MainTableComp';
 import actions from './state-management/actions/employeeActions';
 import $ from 'jquery';
-
-class Tablez extends Component {
-  constructor(props){
-    super(props);
-    //this.props = this.props.bind(this);
-  }
-/*
- return (<table>
-   { keysForSalaryMonth.forEach((item)=>{
-     
-    salaryProperties.map((prop)=>{
-     return(
-       <tbody>
-       <tr><th>{prop}{item} </th></tr>
-       <tr>
-         <td>{salaryObj[item][prop]} </td>
-         </tr>
-</tbody>
-     );
-    })
-       
-    })
-  }
-</table>);
-
-*/
-
-
-  render(){
-    let keysForSalaryMonth=Object.keys(this.props.stateprops.salarysheet[this.props.stateprops.salaryForMonth]);
-    let salaryProperties = Object.keys(this.props.stateprops.salarysheet[this.props.stateprops.salaryForMonth][keysForSalaryMonth[0]]);
-    let salaryObj = this.props.stateprops.salarysheet[this.props.stateprops.salaryForMonth];
-    console.log(salaryObj[keysForSalaryMonth[0]][name]);
-  const trowz = (<table><th>
-    {salaryProperties.map((item)=>
-      <td>{item}</td>
-    )}
-    </th>
-     </table>
-  );
-  
-  const tvalues = (<table>
-     { keysForSalaryMonth.map((epf)=>{
-      return  (<tr>
-       {salaryProperties.map((prprty)=>
-      <td>{salaryObj[epf][prprty]} </td> 
-        
-      )}
-    </tr>)
-    }
-    )}
- 
-      </table>);
-    
-    return(
-      <ul>
-        {trowz}
-      {tvalues}
-        </ul>
-    )
-  }
-}
+import EsiTable from './EsiTable';
+import Tablez from './Tablez';
 
 
 class SalarySheet extends Component {
@@ -194,7 +144,10 @@ componentDidMount(){
     console.log('salary sheet :', this.props.csvData);
     let salaryProperties='';
     let objs = '';
+    let keysForSalaryMonth='';
     if(this.state.salarysheet && this.state.salaryForMonth){
+objs=this.state.salarysheet[this.state.salaryForMonth];
+keysForSalaryMonth=Object.keys(this.state.salarysheet[this.state.salaryForMonth]);
 
       }
 let daysForm;
@@ -225,7 +178,20 @@ let daysForm;
         <Link to="/">Home</Link><br/>
        {daysForm}
   <button onClick={this.handleDaySubmit} >Submit </button>
-{(this.state.salarysheet && this.state.salaryForMonth)?  (<Tablez stateprops={this.state} />):''
+  <br/>
+  <br/>
+  <br/>
+{(this.state.salarysheet && this.state.salaryForMonth)?  (
+   <MuiThemeProvider muiTheme={getMuiTheme()}>
+
+  <Tablez stateprops={this.state} />
+<br/>
+<br/>
+  <EsiTable esiprops={objs} epfs={keysForSalaryMonth} />
+  <br/>
+ </MuiThemeProvider>
+
+  ):''
 }
               </div>
     );

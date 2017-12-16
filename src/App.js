@@ -29,7 +29,11 @@ class App extends Component {
 
   render() {
     console.log(this.props.csvData);
-
+    const style= {
+    backgroundColor: 'cadetblue',
+    fontSize: '16px'
+};
+    
     return (
       <Router>
 
